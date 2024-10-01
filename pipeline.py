@@ -26,7 +26,8 @@ def load_clinical_trials() -> None:
         dataset_name="raw_data",
     )
 
-    load_info = pipeline.run(get_data())
+    # limit number of yield for dev purpose
+    load_info = pipeline.run(get_data().add_limit(10))
     logger.info(load_info)
 
 if __name__ == "__main__":
