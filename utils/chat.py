@@ -1,19 +1,22 @@
-import json
-
 import dlt
 from openai import OpenAI
 
 client = OpenAI(api_key=dlt.secrets.get("credentials.openai_api_key"))
 
 
-def standardize_disease_name(disease_description):
+def standardize_disease_name(disease_description) -> str:
     try:
         prompt = """
-        You are a highly intelligent AI. 
-        I will provide a title related to diseases, and I need you to return a well-structured JSON object in the format:
-        {"name": "<disease>"}
-        Ensure the name is accurate, properly formatted, and corresponds directly to the title provided.
-        If the input is invalid or you can't guess the disease, then return {"name": "Unknown"}
+        You are a sophisticated AI embedded in a data pipeline for health clinics and the medical field. 
+        I will give you an entity, and your task is to standardize it and return a concise, well-structured JSON object. 
+        Summarize and rephrase each entry, keeping it strict and brief.
+        The desired output must look line this: 
+        {
+          "inclusion_criteria": ['<included_criteria>'],
+          "exclusion_criteria": ['<excluded_criteria>']
+        }
+        --
+        Input:
         """
         response = client.chat.completions.create(
             model="gpt-3.5-turbo-1106",
@@ -23,6 +26,6 @@ def standardize_disease_name(disease_description):
             ],
             response_format={"type": "json_object"},
         )
-        return json.loads(response.choices[0].message.content).get("name", "Unknown")
+        return response.choices[0].message.content
     except Exception as e:
         print(f"An error has occurred: {e}")

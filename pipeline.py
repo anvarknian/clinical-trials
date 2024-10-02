@@ -1,3 +1,5 @@
+import json
+
 import dlt
 import duckdb
 from dlt.sources.helpers.rest_client import RESTClient
@@ -85,24 +87,29 @@ def run_dbt_package():
 #     return titles
 
 
-@dlt.source(name='standardized_diagnosis', max_table_nesting=2)
-def source():
+@dlt.source(name='standardized_criteria',max_table_nesting=0)
+def standardized_criteria_source():
     # @dlt.resource(write_disposition="replace", selected=False)
-    def title_df():
+    def criteria_list():
         conn = duckdb.connect(f"{PIPELINE_NAME}.{DESTINATION}")
-        titles = conn.sql("SELECT id, official_title FROM database.cleaned_data.clinical_trials").df()
+        titles = conn.sql("SELECT id, eligibility_criteria FROM database.cleaned_data.eligibility").df()
         yield titles.to_numpy()
 
     @dlt.transformer
-    def standardized_diagnosis(rows):
+    def standardized_criteria(rows):
         @dlt.defer
-        def _get_standardized_diagnosis(_row):
-            return {'id': _row[0], 'description': _row[1], 'diagnosis': standardize_disease_name(_row[1])}
+        def _get_standardized_criteria(_row):
+            result = json.loads(standardize_disease_name(_row[1]))
+            return {
+                'id': _row[0],
+                'inclusion_criteria': result.get('inclusion_criteria',[]),
+                'exclusion_criteria': result.get('exclusion_criteria',[])
+            }
 
         for row in rows:
-            yield _get_standardized_diagnosis(row)
+            yield _get_standardized_criteria(row)
 
-    return (title_df | standardized_diagnosis)
+    return (criteria_list | standardized_criteria)
 
 
 def run_openai_pipeline():
@@ -110,7 +117,7 @@ def run_openai_pipeline():
         pipeline_name=PIPELINE_NAME, destination=DESTINATION,
         dataset_name="cleaned_data", progress="log"
     )
-    info = pipeline.run(source())
+    info = pipeline.run(standardized_criteria_source())
     print(info)
     print(pipeline.last_trace.last_normalize_info)
 
