@@ -1,0 +1,223 @@
+version: 2
+
+models:
+  - name: raw_data
+    description: "Cleaned ClinicalTrialsData"
+
+
+  - name: clinical_trials
+    description: "Cleaned ClinicalTrialsData"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+          - unique
+
+
+  - name: adverse_events
+    description: "Adverse Events data from clinical trials"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: condition_browse
+    description: "Browseable conditions related to the trials"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: eligibility
+    description: "Eligibility criteria for the trials"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: large_document
+    description: "Large documents related to the clinical trials"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: participant_flow
+    description: "Flow of participants through the clinical trial"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: annotations
+    description: "Annotations associated with trial data"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: conditions
+    description: "Detailed conditions related to the trials"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: identification
+    description: "Identification information of clinical trials"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: misc_info_module
+    description: "Miscellaneous information module"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: references
+    description: "References for the clinical trial data"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: arms_interventions
+    description: "Interventions and arms of the clinical trials"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: contacts_locations
+    description: "Contact information and locations related to the trials"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: info
+    description: "General information about the trials"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: outcome_measures
+    description: "Measures of outcomes in clinical trials"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: baseline_characteristics
+    description: "Baseline characteristics of participants"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: description
+    description: "Descriptions of clinical trials"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: intervention_browse
+    description: "Browseable interventions in clinical trials"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: outcomes
+    description: "Outcomes of the clinical trials"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: sponsor_collaborators
+    description: "Sponsors and collaborators in the clinical trials"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: design
+    description: "Design details of the clinical trials"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: ipd_sharing_statement
+    description: "Statement on individual participant data sharing"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: oversight
+    description: "Oversight details for the clinical trials"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
+
+  - name: status
+    description: "Status of the clinical trials"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - not_null
+
