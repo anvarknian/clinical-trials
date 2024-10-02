@@ -1,11 +1,9 @@
-import json
-
 import dlt
 import duckdb
 from dlt.sources.helpers.rest_client import RESTClient
 from dlt.sources.helpers.rest_client.paginators import JSONResponseCursorPaginator
 
-from utils.chat import standardize_disease_name
+from utils.chat import query_chatgpt
 
 API_URL = 'https://clinicaltrials.gov/api/v2'
 PIPELINE_NAME = "database"
@@ -87,7 +85,7 @@ def run_dbt_package():
 #     return titles
 
 
-@dlt.source(name='standardized_criteria',max_table_nesting=0)
+@dlt.source(name='standardized_criteria', max_table_nesting=0)
 def standardized_criteria_source():
     # @dlt.resource(write_disposition="replace", selected=False)
     def criteria_list():
@@ -99,11 +97,11 @@ def standardized_criteria_source():
     def standardized_criteria(rows):
         @dlt.defer
         def _get_standardized_criteria(_row):
-            result = json.loads(standardize_disease_name(_row[1]))
+            inclusion_criteria, exclusion_criteria = query_chatgpt(_row[1])
             return {
                 'id': _row[0],
-                'inclusion_criteria': result.get('inclusion_criteria',[]),
-                'exclusion_criteria': result.get('exclusion_criteria',[])
+                'inclusion_criteria': inclusion_criteria,
+                'exclusion_criteria': exclusion_criteria
             }
 
         for row in rows:

@@ -1,10 +1,14 @@
+import json
+
 import dlt
 from openai import OpenAI
 
 client = OpenAI(api_key=dlt.secrets.get("credentials.openai_api_key"))
 
 
-def standardize_disease_name(disease_description) -> str:
+def query_chatgpt(disease_description):
+    inclusion_criteria = []
+    exclusion_criteria = []
     try:
         prompt = """
         You are a sophisticated AI embedded in a data pipeline for health clinics and the medical field. 
@@ -26,6 +30,10 @@ def standardize_disease_name(disease_description) -> str:
             ],
             response_format={"type": "json_object"},
         )
-        return response.choices[0].message.content
+        result = json.loads(response.choices[0].message.content)
+        inclusion_criteria = result.get('inclusion_criteria', [])
+        exclusion_criteria = result.get('exclusion_criteria', [])
     except Exception as e:
         print(f"An error has occurred: {e}")
+    finally:
+        return inclusion_criteria, exclusion_criteria
