@@ -1,0 +1,7 @@
+dbt-core
+dbt-duckdb
+dlt[duckdb]
+openai
+psutil
+pandas
+numpy

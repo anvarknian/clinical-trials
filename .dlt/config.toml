@@ -1,0 +1,14 @@
+[runtime]
+dlthub_telemetry = false
+log_level="WARNING"
+
+
+[extract]
+workers=10
+max_parallel_items=10
+
+[normalize]
+workers=3
+
+[load]
+workers=50
