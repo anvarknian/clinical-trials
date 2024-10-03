@@ -10,7 +10,6 @@ with source_data as (
         protocol_section__identification_module__official_title  as official_title,
         protocol_section__identification_module__acronym as acronym,
         protocol_section__identification_module__secondary_id_infos as secondary_id_infos,
-        protocol_section__identification_module__nct_id_aliases as nct_id_aliases,
         has_results as has_results
     FROM {{ ref('raw_data') }}
 )
