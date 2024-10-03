@@ -12,6 +12,7 @@ env:
 jobs:
 
   dev-tasks:
+    if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
 
     steps:
@@ -49,13 +50,13 @@ jobs:
           name: database.duckdb
           path: database.duckdb
 
-  main-tasks:
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+      # Build the Docker image
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag ${{ github.repository }}:$(date +%s)
 
+  main-tasks:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      # Build the Docker image
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag ${{ github.repository }}:$(date +%s)
