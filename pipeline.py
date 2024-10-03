@@ -73,16 +73,14 @@ def run_dbt_package():
 def standardized_criteria_source():
     def criteria_list():
         conn = duckdb.connect(f"{PIPELINE_NAME}.{DESTINATION}")
-        query = ("SELECT id, eligibility_criteria "
-                 "FROM database.cleaned_data.eligibility")
-        titles = conn.sql(query).df()
+        sql_query = "SELECT id, eligibility_criteria FROM database.cleaned_data.eligibility"
+        titles = conn.sql(sql_query).df()
         yield titles.to_numpy()
 
     # Using DLT transformer that retrieves a queries in parallel
     @dlt.transformer
     def standardized_criteria(rows):
-        # Using defer marks a function to be executed
-        # in parallel in a thread pool
+        # Using defer marks a function to be executed in parallel in a thread pool
         @dlt.defer
         def _get_standardized_criteria(_row):
             inclusion_criteria, exclusion_criteria = query_chatgpt(_row[1])
