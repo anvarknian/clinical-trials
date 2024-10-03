@@ -52,3 +52,8 @@ To stop the Docker containers, use:
 ```bash
 docker compose stop
 ```
+
+## Thinks to improve 
+- fix dbt schema to fully match target tables
+- handle empty GPT answers + retry strategy
+- 

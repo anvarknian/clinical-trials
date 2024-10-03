@@ -1,20 +1,27 @@
+import json
+
 import dlt
 from openai import OpenAI
 
 client = OpenAI(api_key=dlt.secrets.get("credentials.openai_api_key"))
 
 
-def standardize_disease_name(disease_description) -> str:
+def query_chatgpt(disease_description):
+    inclusion_criteria = None
+    exclusion_criteria = None
     try:
         prompt = """
-        You are a sophisticated AI embedded in a data pipeline for health clinics and the medical field. 
-        I will give you an entity, and your task is to standardize it and return a concise, well-structured JSON object. 
-        Summarize and rephrase each entry, keeping it strict and brief.
-        The desired output must look line this: 
+        You are an AI in a data pipeline for health clinics. 
+        Given an entity, standardize it into a brief, structured JSON. 
+        Summarize entries in 'InclusionCriteria' in one text as <included_criteria_summary> and all entries in 'ExclusionCriteria' in one text as <excluded_criteria_summary>, keeping both strict and concise.
+        
+        The output should be:
+
         {
-          "inclusion_criteria": ['<included_criteria>'],
-          "exclusion_criteria": ['<excluded_criteria>']
+          'inclusion_criteria': '<included_criteria_summary>',
+          'exclusion_criteria': '<excluded_criteria_summary>'
         }
+        
         --
         Input:
         """
@@ -26,6 +33,10 @@ def standardize_disease_name(disease_description) -> str:
             ],
             response_format={"type": "json_object"},
         )
-        return response.choices[0].message.content
+        result = json.loads(response.choices[0].message.content)
+        inclusion_criteria = result.get('inclusion_criteria', None)
+        exclusion_criteria = result.get('exclusion_criteria', None)
     except Exception as e:
         print(f"An error has occurred: {e}")
+    finally:
+        return inclusion_criteria, exclusion_criteria
