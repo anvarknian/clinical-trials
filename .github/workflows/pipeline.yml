@@ -9,7 +9,6 @@ on:
 jobs:
 
   dev-tasks:
-    if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
 
     steps:
@@ -32,7 +31,7 @@ jobs:
       - name: Run dbt compile
         run: cd clinicaltrials_dbt && dbt compile
 
-      # Run dbt compile
+      # Run dbt test
       - name: Run dbt test
         run: cd clinicaltrials_dbt && dbt test
 
