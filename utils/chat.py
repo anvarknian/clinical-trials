@@ -4,7 +4,7 @@ import os
 import dlt
 from openai import OpenAI
 
-#Get api from env or dlt secrets
+# Get OPENAI_API_KEY from env or dlt secrets
 api_key = os.getenv("OPENAI_API_KEY", dlt.secrets.get("credentials.openai_api_key"))
 
 client = OpenAI(api_key=api_key)

@@ -36,7 +36,7 @@ def clinical_trials_source():
     return clinical_trials_resource()
 
 
-def load_clinical_trials(limiter = True):
+def load_clinical_trials(limiter=True):
     pipeline = dlt.pipeline(
         pipeline_name=PIPELINE_NAME, destination=DESTINATION,
         dataset_name="raw_data", progress="log"
@@ -67,11 +67,7 @@ def run_dbt_package():
 
     models = dbt.run_all()
     for m in models:
-        print(
-            f"Model {m.model_name} materialized" +
-            f" in {m.time}" +
-            f" with status {m.status}" +
-            f" and message {m.message}")
+        print(f"Model {m.model_name} materialized in {m.time} with status {m.status} and message {m.message}")
 
 
 @dlt.source(name='standardized_criteria', max_table_nesting=0)

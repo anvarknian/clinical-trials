@@ -28,21 +28,21 @@ jobs:
 
       # Run flake8 for linting
       - name: Run flake8
-        run: flake8 pipeline.py
+        run: flake8
 
       # Run dbt compile
       - name: Run dbt compile
         run: cd clinicaltrials_dbt && dbt compile
 
       # Run in test mode (10 queries)
-      - name: Run dbt test
+      - name: Run pipeline in test mode
         run: python pipeline.py --flag
 
       # Run dbt test
       - name: Run dbt test
         run: cd clinicaltrials_dbt && dbt test
 
-  build-container:
+  main-tasks:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
