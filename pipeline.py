@@ -63,38 +63,17 @@ def run_dbt_package():
             f" and message {m.message}")
 
 
-#
-# @dlt.resource(name='standardized_diagnosis', write_disposition=MODE)
-# def openai_pipeline(df):
-#     for index, row in df.iterrows():
-#         result = standardize_disease_name(row['brief_title'])
-#         yield {'id': row['id'], 'description': row['brief_title'], 'diagnosis': result}
-#
-# def run_openai_pipeline(prompts_list):
-#     pipeline = dlt.pipeline(
-#         pipeline_name=DATABASE_NAME, destination=DEFAULT_DESTINATION,
-#         dataset_name="cleaned_data", progress="log"
-#     )
-#     info = pipeline.run(openai_pipeline(prompts_list))
-#     print(info)
-#     print(pipeline.last_trace.last_normalize_info)
-#
-# def read_cleaned_data():
-#     conn = duckdb.connect(f"{DATABASE_NAME}.{DEFAULT_DESTINATION}")
-#     titles = conn.sql("SELECT id, brief_title FROM database.cleaned_data.clinical_trials").df()
-#     return titles
-
-
 @dlt.source(name='standardized_criteria', max_table_nesting=0)
 def standardized_criteria_source():
-    # @dlt.resource(write_disposition="replace", selected=False)
     def criteria_list():
         conn = duckdb.connect(f"{PIPELINE_NAME}.{DESTINATION}")
         titles = conn.sql("SELECT id, eligibility_criteria FROM database.cleaned_data.eligibility").df()
         yield titles.to_numpy()
 
+    # Using DLT transformer that retrieves a queries in parallel
     @dlt.transformer
     def standardized_criteria(rows):
+        # Using defer marks a function to be executed in parallel in a thread pool
         @dlt.defer
         def _get_standardized_criteria(_row):
             inclusion_criteria, exclusion_criteria = query_chatgpt(_row[1])
