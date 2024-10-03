@@ -5,3 +5,4 @@ openai
 psutil
 pandas
 numpy
+flake8

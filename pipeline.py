@@ -1,22 +1,28 @@
 import dlt
 import duckdb
 from dlt.sources.helpers.rest_client import RESTClient
-from dlt.sources.helpers.rest_client.paginators import JSONResponseCursorPaginator
+from dlt.sources.helpers.rest_client.paginators import (
+    JSONResponseCursorPaginator
+)
 
 from utils.chat import query_chatgpt
 
 API_URL = 'https://clinicaltrials.gov/api/v2'
 PIPELINE_NAME = "database"
 DESTINATION = "duckdb"
-MODE = 'replace'
 
 client = RESTClient(
     base_url=API_URL,
-    paginator=JSONResponseCursorPaginator(cursor_param="pageToken", cursor_path="nextPageToken")
+    paginator=JSONResponseCursorPaginator(
+        cursor_param="pageToken",
+        cursor_path="nextPageToken"
+    )
 )
 
 
-@dlt.resource(name='clinical_trials', write_disposition=MODE, max_table_nesting=2)
+@dlt.resource(name='clinical_trials',
+              write_disposition='replace',
+              max_table_nesting=2)
 def clinical_trials_resource():
     for page in client.paginate("/studies?filter.overallStatus=COMPLETED"):
         studies = page.response.json().get('studies', [])
@@ -67,13 +73,16 @@ def run_dbt_package():
 def standardized_criteria_source():
     def criteria_list():
         conn = duckdb.connect(f"{PIPELINE_NAME}.{DESTINATION}")
-        titles = conn.sql("SELECT id, eligibility_criteria FROM database.cleaned_data.eligibility").df()
+        query = ("SELECT id, eligibility_criteria "
+                 "FROM database.cleaned_data.eligibility")
+        titles = conn.sql(query).df()
         yield titles.to_numpy()
 
     # Using DLT transformer that retrieves a queries in parallel
     @dlt.transformer
     def standardized_criteria(rows):
-        # Using defer marks a function to be executed in parallel in a thread pool
+        # Using defer marks a function to be executed
+        # in parallel in a thread pool
         @dlt.defer
         def _get_standardized_criteria(_row):
             inclusion_criteria, exclusion_criteria = query_chatgpt(_row[1])
