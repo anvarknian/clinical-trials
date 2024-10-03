@@ -1,3 +1,5 @@
+import argparse
+
 import dlt
 import duckdb
 from dlt.sources.helpers.rest_client import RESTClient
@@ -34,14 +36,17 @@ def clinical_trials_source():
     return clinical_trials_resource()
 
 
-def load_clinical_trials():
+def load_clinical_trials(limiter = True):
     pipeline = dlt.pipeline(
         pipeline_name=PIPELINE_NAME, destination=DESTINATION,
         dataset_name="raw_data", progress="log"
     )
 
-    # limit number of yield for dev purpose
-    load_info = pipeline.run(clinical_trials_source().add_limit(10))
+    if limiter:
+        # limit number of yield for dev purpose
+        load_info = pipeline.run(clinical_trials_source().add_limit(10))
+    else:
+        load_info = pipeline.run(clinical_trials_source())
     print(load_info)
     print(pipeline.last_trace.last_normalize_info)
 
@@ -107,6 +112,15 @@ def run_openai_pipeline():
 
 
 if __name__ == "__main__":
-    load_clinical_trials()
+    parser = argparse.ArgumentParser(description="Test Flag")
+    parser.add_argument(
+        '--flag',
+        action='store_true',
+        help='A boolean flag (True if provided, False if not).'
+    )
+    args = parser.parse_args()
+    print(f"Test mode: {args.flag}")
+
+    load_clinical_trials(args.flag)
     run_dbt_package()
     run_openai_pipeline()

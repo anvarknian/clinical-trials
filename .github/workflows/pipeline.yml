@@ -31,6 +31,10 @@ jobs:
       - name: Run dbt compile
         run: cd clinicaltrials_dbt && dbt compile
 
+      # Run in test mode (10 queries)
+      - name: Run dbt test
+        run: python pipeline.py --flag
+
       # Run dbt test
       - name: Run dbt test
         run: cd clinicaltrials_dbt && dbt test
