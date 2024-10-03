@@ -42,6 +42,13 @@ jobs:
       - name: Run dbt test
         run: cd clinicaltrials_dbt && dbt test
 
+      # Upload database as an artifact
+      - name: Upload database as an artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: database.duckdb
+          path: database.duckdb
+
   main-tasks:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
