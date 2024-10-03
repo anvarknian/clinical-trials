@@ -53,7 +53,17 @@ To stop the Docker containers, use:
 docker compose stop
 ```
 
-## Thinks to improve 
+## Next steps:
+
+- Use Apache Airflow for scheduling and managing ETL tasks.
+- Add alerting and monitoring (e.g. Prometheus/Grafana) for failures and performance tracking.
+- Integrate webhooks for triggering downstream workflows and alerting on issues (Slack webhooks).
+- Migrate from Duckdb to a scalable data warehouse (eg. Snowflake) for better performance.
+- Enable incremental data loading to optimize processing.
+- Improve containerization and CI/CD for automated deployment and testing.
+- Enforce data governance and compliance with HIPAA/GDPR.
+- Conduct load testing to ensure scalability under high data volumes.
+- ...
+
+## Things to improve 
 - fix dbt schema to fully match target tables
-- handle empty GPT answers + retry strategy
-- 

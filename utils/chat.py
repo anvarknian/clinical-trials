@@ -1,10 +1,13 @@
 import json
+import os
 
 import dlt
 from openai import OpenAI
 
-client = OpenAI(api_key=dlt.secrets.get("credentials.openai_api_key"))
+# Get OPENAI_API_KEY from env or dlt secrets
+api_key = os.getenv("OPENAI_API_KEY", dlt.secrets.get("credentials.openai_api_key"))
 
+client = OpenAI(api_key=api_key)
 
 def query_chatgpt(disease_description):
     inclusion_criteria = None
