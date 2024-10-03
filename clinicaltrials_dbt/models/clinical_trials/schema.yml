@@ -161,27 +161,6 @@ models:
           - type: not_null
           - type: primary_key
 
-
-  - name: identification
-    description: "Identification information of clinical trials"
-    config:
-      contract:
-        enforced: false
-    columns:
-      - name: id
-        data_type: string
-        description: "The primary key for this table"
-        data_tests:
-          - not_null
-          - unique
-          - relationships:
-              to: ref('clinical_trials')
-              field: id
-        constraints:
-          - type: not_null
-          - type: primary_key
-
-
   - name: misc_info_module
     description: "Miscellaneous information module"
     config:

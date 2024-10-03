@@ -1,0 +1,6 @@
+clinicaltrials_dbt:
+  outputs:
+    default:
+      type: duckdb
+      path: "../database.duckdb"
+      schema: cleaned_data
