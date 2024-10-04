@@ -1,4 +1,5 @@
 import argparse
+import itertools
 
 import dlt
 import duckdb
@@ -8,6 +9,8 @@ from dlt.sources.helpers.rest_client.paginators import (
 )
 
 from utils.chat import query_chatgpt
+
+global IS_TEST
 
 API_URL = 'https://clinicaltrials.gov/api/v2'
 PIPELINE_NAME = "database"
@@ -22,31 +25,28 @@ client = RESTClient(
 )
 
 
-@dlt.resource(name='clinical_trials',
-              write_disposition='replace',
-              max_table_nesting=2)
-def clinical_trials_resource():
-    for page in client.paginate("/studies?filter.overallStatus=COMPLETED"):
-        studies = page.response.json().get('studies', [])
-        yield studies
-
-
 @dlt.source(name="clinical_trials")
 def clinical_trials_source():
+    @dlt.resource(name='clinical_trials',
+                  write_disposition='replace',
+                  max_table_nesting=2)
+    def clinical_trials_resource():
+        if IS_TEST:
+            pages = itertools.islice(client.paginate("/studies?pageSize=100&filter.overallStatus=COMPLETED"), 1)
+        else:
+            pages = client.paginate("/studies?pageSize=1000&filter.overallStatus=COMPLETED")
+        for page in pages:
+            yield page.response.json().get('studies', [])
+
     return clinical_trials_resource()
 
 
-def load_clinical_trials(limiter=True):
+def load_clinical_trials():
     pipeline = dlt.pipeline(
         pipeline_name=PIPELINE_NAME, destination=DESTINATION,
         dataset_name="raw_data", progress="log"
     )
-
-    if limiter:
-        # limit number of yield for dev purpose
-        load_info = pipeline.run(clinical_trials_source().add_limit(10))
-    else:
-        load_info = pipeline.run(clinical_trials_source())
+    load_info = pipeline.run(clinical_trials_source())
     print(load_info)
     print(pipeline.last_trace.last_normalize_info)
 
@@ -115,8 +115,9 @@ if __name__ == "__main__":
         help='A boolean flag (True if provided, False if not).'
     )
     args = parser.parse_args()
-    print(f"Test mode: {args.flag}")
+    IS_TEST = args.flag
+    print(f"Test mode: {IS_TEST}")
 
-    load_clinical_trials(args.flag)
+    load_clinical_trials()
     run_dbt_package()
     run_openai_pipeline()

@@ -8,8 +8,7 @@ with source_data as (
         protocol_section__design_module__patient_registry as patient_registry,
         protocol_section__design_module__phases as phases,
         protocol_section__design_module__design_info as design_info,
-        protocol_section__design_module__enrollment_info as enrollment_info,
-        protocol_section__design_module__bio_spec as bio_spec
+        protocol_section__design_module__enrollment_info as enrollment_info
     FROM {{ ref('raw_data') }}
 )
 
